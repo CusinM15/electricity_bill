@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Mini sistem za obračun električne energije</h1>
+  <p>Izberi eno izmed možnosti:</p>
+
+  <button onclick="window.location.href='/invoices'">
+    ➕ Ustvari nov račun
+  </button>
+
+  <button onclick="window.location.href='/reports'">
+    📊 Pregled računov in porabe
+  </button>
+{% endblock %}

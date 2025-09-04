@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Ta-bol štrom</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+    {% block extra_head %}{% endblock %}
+  </head>
+  <body>
+    <div class="container">
+      <!-- Logo na vrhu -->
+      <div class="header">
+        <img src="/static/logo/logo.png" alt="Logo" />
+      </div>
+
+      <!-- Glavna vsebina -->
+      <div class="content">
+        {% block content %}{% endblock %}
+      </div>
+    </div>
+  </body>
+</html>
