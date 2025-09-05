@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if errors %}
+  <ul style="color:red;">
+    {% for error in errors %}
+      <li>{{ error }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+<form method="POST" action="/invoice/customer">
+  <input type="radio" id="new_customer" name="proxy_mode" value="0" checked>
+  <label for="new_customer">Nov plačnik</label>
+  <input type="radio" id="known_customer" name="proxy_mode" value="1">
+  <label for="known_customer">Znan uporabnik</label>
+
+  <div id="new_customer_fields">
+    <input type="text" name="name" placeholder="Ime" required>
+    <input type="email" name="email" placeholder="Email" required>
+    <input type="text" name="address" placeholder="Naslov" required>
+    <button type="submit">Naprej</button>
+  </div>
+  <div id="known_customer_fields" style="display:none;">
+    <select id="customer_select" name="customer_id" required>
+      <option value="">Izberi uporabnika</option>
+      {% for customer in customers %}
+        <option value="{{ customer.id }}">{{ customer.name }} - {{ customer.address }}</option>
+      {% endfor %}
+    </select>
+    <input type="text" id="known_name" name="known_name" placeholder="Ime" readonly>
+    <input type="email" id="known_email" name="known_email" placeholder="Email" readonly>
+    <input type="text" id="known_address" name="known_address" placeholder="Naslov" readonly>
+    <button type="button" id="edit_btn">Uredi</button>
+    <button type="submit">Naprej</button>
+  </div>
+</form>
+<script>
+document.querySelectorAll('input[name="proxy_mode"]').forEach(function(radio) {
+  radio.addEventListener('change', function() {
+    if (this.value === "0") {
+      document.getElementById('new_customer_fields').style.display = '';
+      document.getElementById('known_customer_fields').style.display = 'none';
+    } else {
+      document.getElementById('new_customer_fields').style.display = 'none';
+      document.getElementById('known_customer_fields').style.display = '';
+    }
+  });
+});
+
+// Fill known customer fields on selection
+document.getElementById('customer_select').addEventListener('change', function() {
+  const selected = this.options[this.selectedIndex];
+  {% for customer in customers %}
+    if (this.value == "{{ customer.id }}") {
+      document.getElementById('known_name').value = "{{ customer.name }}";
+      document.getElementById('known_email').value = "{{ customer.email }}";
+      document.getElementById('known_address').value = "{{ customer.address }}";
+    }
+  {% endfor %}
+});
+
+// Enable editing when "Uredi" is pressed
+document.getElementById('edit_btn').addEventListener('click', function() {
+  document.getElementById('known_name').readOnly = false;
+  document.getElementById('known_email').readOnly = false;
+  document.getElementById('known_address').readOnly = false;
+});
+</script>
+<script>
+function updateFields() {
+  if (document.getElementById('new_customer').checked) {
+    document.getElementById('new_customer_fields').style.display = '';
+    document.getElementById('known_customer_fields').style.display = 'none';
+    document.querySelectorAll('#new_customer_fields input').forEach(function(input) {
+      input.disabled = false;
+    });
+    document.querySelectorAll('#known_customer_fields input, #known_customer_fields select').forEach(function(input) {
+      input.disabled = true;
+    });
+  } else {
+    document.getElementById('new_customer_fields').style.display = 'none';
+    document.getElementById('known_customer_fields').style.display = '';
+    document.querySelectorAll('#new_customer_fields input').forEach(function(input) {
+      input.disabled = true;
+    });
+    document.querySelectorAll('#known_customer_fields input, #known_customer_fields select').forEach(function(input) {
+      input.disabled = false;
+    });
+  }
+}
+document.querySelectorAll('input[name="proxy_mode"]').forEach(function(radio) {
+  radio.addEventListener('change', updateFields);
+});
+window.onload = updateFields;
+</script>
+{% endblock %}
+

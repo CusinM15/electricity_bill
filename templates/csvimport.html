@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Izberi CSV datoteko za uvoz</h2>
+<form method="POST" action="/invoice/csvimport">
+  <input type="hidden" name="customer_id" value="{{ customer.id }}">
+  <table style="float:left;">
+    <tr><th>CSV datoteke</th></tr>
+    {% for file in files %}
+      <tr>
+        <td>
+          <input type="radio" name="selected_file" value="{{ file }}" id="{{ file }}">
+          <label for="{{ file }}">{{ file }}</label>
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+  <button type="submit" style="margin-left:20px;">Uvozi</button>
+</form>
+{% endblock %}
