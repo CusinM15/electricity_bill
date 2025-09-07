@@ -4,13 +4,14 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from database import engine, Base 
 from models.invoice import Invoice
-from routers import customer, csvimport
+from routers import customer, csvimport, finish
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 app.include_router(customer.router)
 app.include_router(csvimport.router)
+app.include_router(finish.router)
 Base.metadata.create_all(bind=engine)
 
 @app.get("/")

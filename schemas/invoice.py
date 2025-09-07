@@ -10,6 +10,7 @@ class InvoiceBase(BaseModel):
     reference: str
     amount_net: float
     amount_gross: float
+    file_path: str | None = None
 
 class InvoiceCreate(InvoiceBase):
     pass

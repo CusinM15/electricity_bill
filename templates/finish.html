@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .button-container {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+    }
+    
+    .action-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        transition: background-color 0.3s ease;
+        text-decoration: none;
+        color: white;
+    }
+
+    .action-button svg {
+        margin-right: 8px;
+    }
+
+    .download-button {
+        background-color: #4CAF50;
+    }
+
+    .download-button:hover {
+        background-color: #45a049;
+    }
+    
+    .email-button {
+        background-color: #2196F3;
+    }
+    
+    .email-button:hover {
+        background-color: #0b7dda;
+    }
+</style>
+
+<h2>Račun uspešno ustvarjen!</h2>
+
+<div class="button-container">
+    <a href="{{ url_for('download_invoice', invoice_id=invoice.id) }}" id="downloadLink" class="action-button download-button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        Prenesi
+    </a>
+
+    <form method="post" action="{{ url_for('send_invoice', invoice_id=invoice.id) }}">
+        <button type="submit" class="action-button email-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+            Pošlji po e-pošti
+        </button>
+    </form>
+</div>
+
+<script>
+    document.getElementById('downloadLink').addEventListener('click', function(event) {
+        // wait so it can start downloading
+        setTimeout(function() {
+            window.location.href = '/';
+        }, 500); // 500ms 
+    });
+</script>
+{% endblock %}

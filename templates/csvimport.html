@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <h2>Izberi CSV datoteko za uvoz</h2>
-<form method="POST" action="/invoice/csvimport">
+<form method="POST" action="/invoice/csvimport" onsubmit="return validateForm()">
   <input type="hidden" name="customer_id" value="{{ customer.id }}">
   <table style="float:left;">
     <tr><th>CSV datoteke</th></tr>
@@ -16,4 +16,29 @@
   </table>
   <button type="submit" style="margin-left:20px;">Uvozi</button>
 </form>
+
+<script>
+    function validateForm() {
+        // get all radio buttons with the name "selected_file"
+        const radioButtons = document.getElementsByName('selected_file');
+        let fileSelected = false;
+
+        // loop through the radio buttons to see if any are checked
+        for (let i = 0; i < radioButtons.length; i++) {
+            if (radioButtons[i].checked) {
+                fileSelected = true;
+                break; // exit the loop once a checked button is found
+            }
+        }
+
+        // if no file is selected, show an alert and return false to prevent form submission
+        if (!fileSelected) {
+            alert("Prosimo, izberite eno CSV datoteko.");
+            return false;
+        }
+
+        // if a file is selected, return true to allow the form to submit
+        return true;
+    }
+</script>
 {% endblock %}

@@ -14,5 +14,6 @@ class Invoice(Base):
     reference = Column(String, nullable=False)
     amount_net = Column(Float, nullable=False)
     amount_gross = Column(Float, nullable=False)
+    file_path = Column(String, nullable=True)
 
     customer = relationship("Customer")

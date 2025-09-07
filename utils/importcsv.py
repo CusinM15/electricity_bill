@@ -2,7 +2,6 @@ import csv
 
 def import_csv(file_path):
     amount = 0
-    tax = 0.22
     with open(file_path, mode='r', newline='', encoding='utf-8-sig') as csvfile:
         reader = csv.reader(csvfile, delimiter=';')
         headers = next(reader)
@@ -16,6 +15,9 @@ def import_csv(file_path):
                 first_day = row[time_idx]
             last_day = row[time_idx]
             amount += float(poraba_idx) * float(cena_idx)
-    ddv = amount * tax
-    return (first_day, last_day, amount, ddv)
+    
+    first_day = first_day.split('T')[0]
+    last_day = last_day.split('T')[0]
+    return (first_day, last_day, amount)
+
             

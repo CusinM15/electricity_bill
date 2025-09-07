@@ -47,7 +47,7 @@ document.querySelectorAll('input[name="proxy_mode"]').forEach(function(radio) {
   });
 });
 
-// Fill known customer fields on selection
+// fill known customer fields on selection
 document.getElementById('customer_select').addEventListener('change', function() {
   const selected = this.options[this.selectedIndex];
   {% for customer in customers %}
@@ -59,7 +59,7 @@ document.getElementById('customer_select').addEventListener('change', function()
   {% endfor %}
 });
 
-// Enable editing when "Uredi" is pressed
+// enable editing when "Uredi" is pressed
 document.getElementById('edit_btn').addEventListener('click', function() {
   document.getElementById('known_name').readOnly = false;
   document.getElementById('known_email').readOnly = false;

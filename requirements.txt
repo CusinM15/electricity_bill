@@ -6,3 +6,6 @@ aiosmtplib
 email-validator
 sqlalchemy
 python-multipart
+reportlab
+qrcode[pil]
+fastapi-mail

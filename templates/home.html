@@ -1,14 +1,58 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>Mini sistem za obračun električne energije</h1>
-  <p>Izberi eno izmed možnosti:</p>
+<style>
+    .button-container {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+    }
+    
+    .action-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        transition: background-color 0.3s ease;
+        text-decoration: none;
+        color: white;
+    }
 
-  <button onclick="window.location.href='/invoice/customer'">
-    ➕ Ustvari nov račun
-  </button>
+    .action-button svg {
+        margin-right: 8px;
+    }
 
-  <button onclick="window.location.href='/reports'">
-    📊 Pregled računov in porabe
-  </button>
+    .download-button {
+        background-color: #4CAF50; /* Green color for 'Create new' */
+    }
+
+    .download-button:hover {
+        background-color: #45a049;
+    }
+    
+    .email-button {
+        background-color: #2196F3; 
+    }
+    
+    .email-button:hover {
+        background-color: #0b7dda;
+    }
+</style>
+
+<h1>Mini sistem za obračun električne energije</h1>
+<p>Izberi eno izmed možnosti:</p>
+
+<div class="button-container">
+    <a href="/invoice/customer" class="action-button download-button">
+        ➕ Ustvari nov račun
+    </a>
+
+    <a href="/reports" class="action-button email-button">
+        📊 Pregled računov in porabe
+    </a>
+</div>
 {% endblock %}
