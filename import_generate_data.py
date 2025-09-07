@@ -11,10 +11,10 @@ from utils.create_invoice import generate_invoice
 
 def import_data():
     db = next(get_db())
-    db.query(Customer).delete()
+    db.query(Customer).delete() # clean customer tabel, so email will be unique
     db.commit()
     for element in users_list:
-        # dodaj customerja
+        # add customer
         customer = Customer(
             name=element[0],
             email=element[1],
@@ -24,23 +24,23 @@ def import_data():
         db.commit()
         db.refresh(customer)
 
-        # naključno število računov za stranko
-        num_f = random.randint(1, 5)  # ne 20, da ne bo predolgo
-        csv_files = [f for f in os.listdir(CSV_WAITING_DIR) if f.endswith(".csv")]
+        # random number of csv, per each customer
+        num_f = random.randint(1, 5)  
+        csv_files = [f for f in os.listdir(CSV_WAITING_DIR) if f.endswith(".csv")] # list of csv files in correct directory
 
         for i in range(num_f):
             if not csv_files:
                 print("Ni CSV datotek v mapi:", CSV_WAITING_DIR)
                 return
 
-            chosen_file = random.choice(csv_files)
+            chosen_file = random.choice(csv_files) # choose one file randomly
             file_path = os.path.join(CSV_WAITING_DIR, chosen_file)
 
-            # import podatkov iz CSV
+            # import data from CSV
             first_day, last_day, amount = import_csv(file_path)
             today = date.today()
             pay_till = today + timedelta(days=plus_day_pay)
-            # dodaj invoice
+            # add invoice
             date_format = '%Y-%m-%d'
             invoice = Invoice(
                 customer_id=customer.id,
@@ -56,12 +56,12 @@ def import_data():
             db.commit()
             db.refresh(invoice)
 
-            # dodaj pot do pdf računa
+            # invoice path
             save_path = f"racun{invoice.id}.pdf"
             invoice.file_path = save_path
             db.commit()
 
-            # generiraj račun v PDF
+            # generate invoice pdf file
             generate_invoice(customer, first_day, last_day, amount, save_path)
             print(f"Račun {save_path} ustvarjen za {customer.name}")
 
