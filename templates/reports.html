@@ -1,5 +1,172 @@
 {% extends "base.html" %}
 
 {% block content %}
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customer Reports</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body {
+  font-family: 'Inter', sans-serif;
+}
+</style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-900 dark:text-slate-50 min-h-screen p-8">
 
+<div class="container mx-auto max-w-6xl p-6 bg-white dark:bg-slate-800 rounded-lg shadow-xl border-t-4 border-indigo-500">
+  <h1 class="text-3xl font-bold text-center mb-6">Customer and Invoice Reports</h1>
+
+  <!-- filters -->
+  <div class="flex flex-wrap gap-4 mb-6">
+    <div>
+      <label for="filterFrom" class="mr-2">Od:</label>
+      <select id="filterFrom" class="border p-2 rounded text-black dark:text-dark"></select>
+    </div>
+    <div>
+      <label for="filterTo" class="mr-2">Do:</label>
+      <select id="filterTo" class="border p-2 rounded text-black dark:text-dark"></select>
+    </div>
+    <div>
+      <label for="sumMode" class="mr-2">Način prikaza</label>
+      <select id="sumMode" class="border p-2 rounded text-black dark:text-dark">
+        <option value="normal">Vsi računi</option>
+        <option value="byCustomer">Seštej po strankah</option>
+        <option value="byPeriod">Seštej po obdobju</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- checkboxi -->
+  <div id="column-filters" class="flex flex-wrap gap-4 mb-6">
+    <label><input type="checkbox" value="name" checked> Ime</label>
+    <label><input type="checkbox" value="address" checked> Naslov</label>
+    <label><input type="checkbox" value="email" checked> Email</label>
+    <label><input type="checkbox" value="file_path" checked> Račun</label>
+    <label><input type="checkbox" value="due_date" checked> Plačati do</label>
+    <label><input type="checkbox" value="iban" checked> IBAN</label>
+    <label><input type="checkbox" value="reference" checked> Referenca</label>
+    <label><input type="checkbox" value="amount_net" checked> Brez DDV</label>
+    <label><input type="checkbox" value="amount_gross" checked> Z DDV</label>
+    <label><input type="checkbox" value="date_from" checked> Od</label>
+    <label><input type="checkbox" value="date_to" checked> Do</label>
+  </div>
+
+  <!-- table -->
+  <table id="reports-table" class="hidden min-w-full bg-white dark:bg-slate-800 rounded-lg overflow-hidden">
+    <thead class="bg-indigo-500 text-white">
+      <tr id="reports-header"></tr>
+    </thead>
+    <tbody id="reports-body"></tbody>
+  </table>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const reportsBody = document.getElementById('reports-body');
+    const reportsHeader = document.getElementById('reports-header');
+    const reportsTable = document.getElementById('reports-table');
+    const filterFrom = document.getElementById('filterFrom');
+    const filterTo = document.getElementById('filterTo');
+    const sumMode = document.getElementById('sumMode');
+
+    // mapping colums with nicer names
+    const columnLabels = {
+        name: "Ime",
+        address: "Naslov",
+        email: "Email",
+        file_path: "Račun",
+        due_date: "Plačati do",
+        iban: "IBAN",
+        reference: "Referenca",
+        amount_net: "Brez DDV",
+        amount_gross: "Z DDV",
+        date_from: "Od",
+        date_to: "Do"
+    };
+
+    function populateTable(data) {
+        reportsBody.innerHTML = "";
+        reportsHeader.innerHTML = "";
+
+        const visibleColumns = [...document.querySelectorAll('#column-filters input:checked')].map(cb => cb.value);
+
+        // nice name connection
+        visibleColumns.forEach(col => {
+            const th = document.createElement("th");
+            th.classList.add("px-6","py-3","text-left");
+            th.textContent = columnLabels[col] || col;
+            reportsHeader.appendChild(th);
+        });
+
+        // row
+        data.forEach(item => {
+            const row = document.createElement("tr");
+            let cells = "";
+            visibleColumns.forEach(col => {
+                let val = item[col] || "-";
+                if (col === "file_path" && item.file_path) {
+                    val = `<a href="/static/bills/${item.file_path}" target="_blank">${item.file_path}</a>`;
+                }
+                if (col === "amount_net" || col === "amount_gross") {
+                    val = `${val}€`;
+                }
+                cells += `<td class="px-6 py-4">${val}</td>`;
+            });
+            row.innerHTML = cells;
+            reportsBody.appendChild(row);
+        });
+
+        reportsTable.classList.remove("hidden");
+    }
+
+    function applyFilters() {
+        const params = new URLSearchParams({
+            date_from: filterFrom.value,
+            date_to: filterTo.value,
+            sum_mode: sumMode.value
+        });
+
+        fetch(`/reports_data?${params.toString()}`)
+            .then(r => r.json())
+            .then(data => {
+                populateTable(data);
+            });
+    }
+
+    // dropdowni
+    fetch('/reports_filters')
+        .then(r => r.json())
+        .then(filters => {
+            filters.from_dates.forEach((d, idx) => {
+                let opt = document.createElement("option");
+                opt.value = d;
+                opt.textContent = d;
+                if (idx === 0) opt.selected = true;
+                filterFrom.appendChild(opt);
+            });
+
+            filters.to_dates.forEach((d, idx) => {
+                let opt = document.createElement("option");
+                opt.value = d;
+                opt.textContent = d;
+                if (idx === 0) opt.selected = true;
+                filterTo.appendChild(opt);
+            });
+
+            applyFilters();
+        });
+
+    filterFrom.addEventListener("change", applyFilters);
+    filterTo.addEventListener("change", applyFilters);
+    sumMode.addEventListener("change", applyFilters);
+    document.querySelectorAll('#column-filters input').forEach(cb => {
+        cb.addEventListener("change", applyFilters);
+    });
+});
+</script>
+
+</body>
+</html>
 {% endblock %}

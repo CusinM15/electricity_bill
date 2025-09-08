@@ -1,0 +1,9 @@
+__pycashe__
+*.pys
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.env
+*.log

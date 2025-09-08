@@ -27,17 +27,20 @@ def import_data():
         # random number of csv, per each customer
         num_f = random.randint(1, 5)  
         csv_files = [f for f in os.listdir(CSV_WAITING_DIR) if f.endswith(".csv")] # list of csv files in correct directory
-
+        csv_file_calculated = list()
+        for csv in csv_files:
+            # import data from CSV
+            file_path = os.path.join(CSV_WAITING_DIR, csv)
+            csv_file_calculated.append(list(import_csv(file_path)))
         for i in range(num_f):
             if not csv_files:
                 print("Ni CSV datotek v mapi:", CSV_WAITING_DIR)
                 return
 
-            chosen_file = random.choice(csv_files) # choose one file randomly
-            file_path = os.path.join(CSV_WAITING_DIR, chosen_file)
+            chosen_file = random.choice(csv_file_calculated) # choose one file randomly
+            first_day, last_day, amount = chosen_file
 
-            # import data from CSV
-            first_day, last_day, amount = import_csv(file_path)
+            
             today = date.today()
             pay_till = today + timedelta(days=plus_day_pay)
             # add invoice
@@ -50,7 +53,7 @@ def import_data():
                 iban=iban,
                 reference=referenca,
                 amount_net=amount,
-                amount_gross=amount * tax
+                amount_gross=round((amount + (amount * tax)),2)
             )
             db.add(invoice)
             db.commit()

@@ -50,7 +50,7 @@ def import_csv_view(
         iban = iban,
         reference = referenca,
         amount_net = amount,
-        amount_gross = amount * tax
+        amount_gross = round((amount + (amount * tax)), 2)
     )
     db.add(db_invoice)
     db.commit()
@@ -61,6 +61,6 @@ def import_csv_view(
     # generate invoice
     generate_invoice(customer, first_day, last_day, amount, save_path)
     
-    move csv to new directory
+    # move csv to new directory
     move_csv(CSV_WAITING_DIR + selected_file, CSV_SEND_DIR)
     return RedirectResponse(url=f"/invoice/finish?invoice_id={db_invoice.id}", status_code=303)
