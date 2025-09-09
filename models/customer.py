@@ -9,3 +9,4 @@ class Customer(Base):
     name = Column(Unicode, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     address = Column(Unicode, unique=False, index=True, nullable=False)
+    post = Column(Unicode, unique=False, index=True, nullable=False)

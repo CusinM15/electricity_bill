@@ -18,7 +18,8 @@ def import_data():
         customer = Customer(
             name=element[0],
             email=element[1],
-            address=element[2]
+            address=element[2],
+            post=element[3]
         )
         db.add(customer)
         db.commit()

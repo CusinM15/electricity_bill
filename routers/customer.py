@@ -10,7 +10,7 @@ templates = Jinja2Templates(directory="templates")
 
 @router.get("/invoice/customer")
 def show_invoice(request: Request, db: Session = Depends(get_db)):
-    customers = db.query(Customer).order_by(Customer.name, Customer.address).all()
+    customers = db.query(Customer).order_by(Customer.name, Customer.address, Customer.post).all()
     return templates.TemplateResponse("customer.html", {"request": request, "customers": customers})
 
 @router.post("/invoice/customer")
@@ -20,6 +20,7 @@ async def process_invoice(
     name: str = Form(""),
     email: str = Form(""),
     address: str = Form(""),
+    post: str = Form(""),
     customer_id: str = Form(""),
     known_name: str = Form(""),
     known_email: str = Form(""),
@@ -43,7 +44,7 @@ async def process_invoice(
             errors.append("Email že obstaja.")
             customers = db.query(Customer).order_by(Customer.name, Customer.address).all()
             return templates.TemplateResponse("customer.html", {"request": request, "errors": errors, "customers": customers})
-        db_customer = Customer(name=name, email=email, address=address)
+        db_customer = Customer(name=name.strip(), email=email-strip(), address=address.strip(), post=post.strip())
         db.add(db_customer)
         db.commit()
         db.refresh(db_customer)
@@ -69,7 +70,7 @@ async def process_invoice(
             customers = db.query(Customer).order_by(Customer.name, Customer.address).all()
             return templates.TemplateResponse("customer.html", {"request": request, "errors": errors, "customers": customers})
         # check if data was changed
-        if (known_name != customer.name or known_email != customer.email or known_address != customer.address):
+        if (known_name != customer.name or known_email != customer.email or known_address != customer.address or known_post != customer.post):
             # if email changed, check uniqueness
             if known_email != customer.email:
                 existing = db.query(Customer).filter(Customer.email == known_email).first()
@@ -78,9 +79,10 @@ async def process_invoice(
                     customers = db.query(Customer).order_by(Customer.name, Customer.address).all()
                     return templates.TemplateResponse("customer.html", {"request": request, "errors": errors, "customers": customers})
             # update customer
-            customer.name = known_name
-            customer.email = known_email
-            customer.address = known_address
+            customer.name = known_name.strip()
+            customer.email = known_email.strip()
+            customer.address = known_address.strip()
+            customer.post = known_post.strip()
             db.commit()
         selected_customer = customer
 

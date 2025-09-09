@@ -28,6 +28,7 @@ def get_reports_data(
                     c.name,
                     c.email,
                     c.address,
+                    c.post,
                     i.file_path,
                     i.due_date,
                     i.iban,
@@ -85,6 +86,23 @@ def get_reports_data(
                     JOIN customers c ON c.id = i.customer_id
                     WHERE 1=1
                     GROUP BY i.date_from
+                """
+
+                result = conn.execute(text(query), params).mappings()
+                return [dict(row) for row in result]
+            
+            elif sum_mode == "byPost":
+                query = """
+                    SELECT 
+                        c.post,
+                        MIN(i.date_from) AS date_from,
+                        MAX(i.date_to) AS date_to,
+                        SUM(i.amount_net) AS amount_net,
+                        SUM(i.amount_gross) AS amount_gross
+                    FROM invoices i
+                    JOIN customers c ON c.id = i.customer_id
+                    WHERE 1=1
+                    GROUP BY c.post
                 """
 
                 result = conn.execute(text(query), params).mappings()

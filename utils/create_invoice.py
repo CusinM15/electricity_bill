@@ -1,4 +1,4 @@
-from utils.global_variable import tax, iban, referenca, company_name, plus_day_pay, reciver_address, reciver_post
+from utils.global_variable import tax, iban, referenca, company_name, plus_day_pay, reciver_address, reciver_post, BILL_DIR
 from utils.qr_format_banc import generate_upn_qr
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
@@ -16,7 +16,7 @@ pdfmetrics.registerFont(TTFont("DejaVu", "fonts/DejaVuSans.ttf"))
 def generate_invoice(customer, first_day, last_day, amount, save_path):
     today = date.today()
     pay_till = today + timedelta(days=plus_day_pay)
-    document = canvas.Canvas("static/bills/" + save_path, pagesize=A4, encoding='utf-8-sign')
+    document = canvas.Canvas(BILL_DIR + save_path, pagesize=A4, encoding='utf-8-sign')
     width, height = A4
     ddv = amount * tax
     # title

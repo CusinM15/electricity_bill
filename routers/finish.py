@@ -6,7 +6,7 @@ import os
 from utils.importcsv import import_csv  
 from utils.create_invoice import generate_invoice  
 from utils.move_csv import move_csv
-from utils.global_variable import CSV_WAITING_DIR, CSV_SEND_DIR, plus_day_pay, iban, referenca, tax
+from utils.global_variable import CSV_WAITING_DIR, CSV_SEND_DIR, plus_day_pay, iban, referenca, tax, BILL_DIR
 from database import get_db
 from models.customer import Customer
 from models.invoice import Invoice
@@ -31,7 +31,7 @@ def download_invoice(invoice_id: int, db: Session = Depends(get_db)):
     invoice = db.query(Invoice).filter(Invoice.id == invoice_id).first()
     if not invoice:
         return {"error": "Invoice not found"}
-    return FileResponse(path=f"static/bills/{invoice.file_path}", filename=os.path.basename(invoice.file_path), media_type="application/pdf")
+    return FileResponse(path=f"{BILL_DIR}{invoice.file_path}", filename=os.path.basename(invoice.file_path), media_type="application/pdf")
 
 
 @router.post("/invoice/send/{invoice_id}", name="send_invoice")
