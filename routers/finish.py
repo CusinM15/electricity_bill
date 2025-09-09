@@ -13,6 +13,7 @@ from models.invoice import Invoice
 from datetime import date, timedelta, datetime    
 import smtplib
 from email.message import EmailMessage
+from smtplib import SMTPAuthenticationError
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")

@@ -25,6 +25,7 @@ async def process_invoice(
     known_name: str = Form(""),
     known_email: str = Form(""),
     known_address: str = Form(""),
+    known_post: str = Form(""),
     db: Session = Depends(get_db)
 ):
     errors = []
@@ -44,7 +45,7 @@ async def process_invoice(
             errors.append("Email že obstaja.")
             customers = db.query(Customer).order_by(Customer.name, Customer.address).all()
             return templates.TemplateResponse("customer.html", {"request": request, "errors": errors, "customers": customers})
-        db_customer = Customer(name=name.strip(), email=email-strip(), address=address.strip(), post=post.strip())
+        db_customer = Customer(name=name.strip(), email=email.strip(), address=address.strip(), post=post.strip())
         db.add(db_customer)
         db.commit()
         db.refresh(db_customer)

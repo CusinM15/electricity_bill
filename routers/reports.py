@@ -61,6 +61,7 @@ def get_reports_data(
                         c.email,
                         c.name,
                         c.address,
+                        c.post,
                         SUM(i.amount_net) AS amount_net,
                         SUM(i.amount_gross) AS amount_gross
                     FROM invoices i
